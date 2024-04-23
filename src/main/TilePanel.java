@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class TilePanel extends JPanel {
 
@@ -18,7 +19,7 @@ public class TilePanel extends JPanel {
     final int screenHeight = tileSize * maxScreenRow;
 
     private static TileSelectionListener tileSelectionListener;
-    private BufferedImage[] textures;
+    private Tile[] textures;
     private GamePanel gp;
 
     public TilePanel(GamePanel gp){
@@ -27,6 +28,14 @@ public class TilePanel extends JPanel {
         this.setBackground(Color.white);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.textures = textureHandler.getTextures();
+        ArrayList<Tile> tmpTxtList = new ArrayList<Tile>();
+        for (Tile tile : textures){
+            if (!tile.combined) tmpTxtList.add(tile);
+        }
+        textures = new Tile[tmpTxtList.size()];
+        textures = tmpTxtList.toArray(textures);
+
+
 
         this.add(Box.createVerticalGlue());
 
@@ -74,7 +83,7 @@ public class TilePanel extends JPanel {
                 int y = e.getY() / tileSize;
                 int index = y * columns + x;
                 if (index >= 0 && index < textures.length) {
-                    fireTileSelected(index);
+                    fireTileSelected(textures[index].id);
                 }
             }
         });
@@ -98,7 +107,7 @@ public class TilePanel extends JPanel {
         for (int i = 0; i < textures.length; i++) {
             int x = (i % columns) * tileSize; // x-Position berechnen
             int y = (i / columns) * tileSize; // y-Position berechnen
-            g.drawImage(textures[i], x, y, tileSize, tileSize, null);
+            g.drawImage(textures[i].texture, x, y, tileSize, tileSize, null);
         }
     }
 }

@@ -12,10 +12,10 @@ import java.util.Optional;
 public class textureHandler {
     static String path = "./src/textures";
 
-    static public BufferedImage[] getTextures(){
+    static public Tile[] getTextures(){
         File[] dir = new File(path).listFiles();
         ArrayList<BufferedImage> imgList = new ArrayList<BufferedImage>();
-        BufferedImage[] imgArr = new BufferedImage[dir.length];
+        Tile[] tileArr = new Tile[dir.length];
         try {
             for (File f : Objects.requireNonNull(dir)){
                 BufferedImage img = ImageIO.read(f);
@@ -24,11 +24,15 @@ public class textureHandler {
                 img.getGraphics().drawImage(scaleImg, 0, 0, null);
                 imgList.add(img);
                 String renamePath = f.getPath().replace(f.getName(), imgList.size()-1 + "-" + f.getName());
-                if(!f.getName().matches("^\\d.*")) f.renameTo(new File(renamePath));
                 int index;
-                String[] keys = f.getName().split("-");
-                index = Integer.parseInt(keys[0]);
-                imgArr[index] = img;
+                String[] keys = f.getName().replace(".png", "").split("-");
+                if(!f.getName().matches("^\\d.*")) {
+                    f.renameTo(new File(renamePath));
+                    index = imgList.size() - 1;
+                } else index = Integer.parseInt(keys[0]);
+                boolean combined = keys[2].equals("C");
+
+                tileArr[index] = new Tile(img, index, !keys[1].equals("N"), combined);
                 //System.out.println(renamePath);
             }
         } catch (Exception e){
@@ -38,6 +42,6 @@ public class textureHandler {
         BufferedImage[] returnArr = new BufferedImage[imgList.size()];
         returnArr = imgList.toArray(returnArr);
         //return returnArr;
-        return imgArr;
+        return tileArr;
     }
 }

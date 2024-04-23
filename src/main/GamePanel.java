@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -24,7 +25,7 @@ public class GamePanel extends JPanel implements Runnable{
     final int screenWidth = tileSize * maxScreenCol;
     final int screenHeight = tileSize * maxScreenRow;
 
-    private BufferedImage[] textures;
+    private Tile[] textures;
 
     final private int sizeX = 16 * 2;
     final private int sizeY = 16 * 2;
@@ -35,6 +36,7 @@ public class GamePanel extends JPanel implements Runnable{
     private int startX;
     private int startY;
     private boolean isDragging;
+    private int cursorID;
 
     int FPS = 60;
 
@@ -163,6 +165,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         //System.out.printf("x: %d y: %d\n", cursorX, cursorY);
         if (cursorX >= 0 && cursorX <= map.length-1 && cursorY >= 0 && cursorY <= map[0].length-1){
+            cursorID = map[cursorX][cursorY];
             if(mouseBtn == 1){
                 if(this.combineActive){
                     if(cursorX != lastCursorX || cursorY != lastCursorY){
@@ -179,24 +182,40 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     private int combine(int sourceID){
-        BufferedImage sourceImage = textures[sourceID];
-        BufferedImage image2 = textures[selectedTileId];
+        BufferedImage sourceImage = textures[sourceID].texture;
+        BufferedImage image2 = textures[selectedTileId].texture;
         BufferedImage combinedImage = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
+
+        if(textures[sourceID].combined || textures[selectedTileId].combined) return sourceID;
+
+
+        ArrayList<File> dirList = new ArrayList<>(Arrays.asList(new File(path).listFiles()));
+        dirList.removeIf(file -> !file.getName().contains("combined"));
+        for (File f : dirList){
+            System.out.println(f.getName());
+            String[] keys = f.getName().replace(".png", "").split("-");
+            int parent1 = Integer.parseInt(keys[3]);
+            int parent2 = Integer.parseInt(keys[4]);
+            System.out.println(parent1 + "-" + parent2);
+            if(Math.max(parent1, parent2) == Math.max(sourceID, selectedTileId) && Math.min(parent1, parent2) == Math.min(sourceID, selectedTileId)){
+                return Integer.parseInt(keys[0]); // return tile id if combination already exists
+            }
+        }
+        // this part only runs when the new tile combination does not exist yet
         Graphics2D g2d = combinedImage.createGraphics();
         g2d.drawImage(sourceImage, 0, 0, null);
         g2d.drawImage(image2, 0, 0, null);
         g2d.dispose();
+        boolean walkable = textures[sourceID].walkable || textures[selectedTileId].walkable;
+        String walk = walkable? "W" : "N";
 
-        System.out.println("saving combined image");
         try {
-            File file = new File(path + textures.length + "-N-combined.png");
+            File file = new File(path + textures.length + "-" + walk + "-C-" + sourceID + "-" + selectedTileId + "-combined.png");
             ImageIO.write(combinedImage, "png", file);
-            System.out.println("saved combined image");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         textures = textureHandler.getTextures();
-
         return textures.length-1;
     }
 
@@ -213,7 +232,7 @@ public class GamePanel extends JPanel implements Runnable{
                     continue;
                 }
                 try {
-                    g.drawImage(textures[map[x][y]], (int) ((x * 64 + camOffsetX)), (int) ((y * 64 + camOffsetY)), (int) (tileSize), (int) (tileSize), null);
+                    g.drawImage(textures[map[x][y]].texture, (int) ((x * 64 + camOffsetX)), (int) ((y * 64 + camOffsetY)), (int) (tileSize), (int) (tileSize), null);
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -222,11 +241,12 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
 
-        g.drawImage(textures[selectedTileId], (int) ((cursorX * 64 + camOffsetX)), (int) ((cursorY * 64 + camOffsetY)), (int) (tileSize), (int) (tileSize), null);
+        g.drawImage(textures[selectedTileId].texture, (int) ((cursorX * 64 + camOffsetX)), (int) ((cursorY * 64 + camOffsetY)), (int) (tileSize), (int) (tileSize), null);
 
         g2.setColor(Color.WHITE);
         g2.drawString("Selected Tile ID: " + selectedTileId, 20, 20);
         g2.drawString("Cursor Position: x " + cursorX + " y " + cursorY, 20, 40);
+        g2.drawString("Hovering over ID: " + cursorID, 20, 60);
 
         g2.dispose();
     }

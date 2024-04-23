@@ -4,12 +4,20 @@ import java.awt.image.BufferedImage;
 
 public class Tile {
     BufferedImage texture;
+    int id;
     boolean walkable;
-    boolean transparent;
+    boolean combined;
+    int[] parents;
 
-    public Tile(BufferedImage texture, boolean walkable, boolean transparent){
+    public Tile(BufferedImage texture, int id, boolean walkable, boolean combined){
         this.texture = texture;
+        this.id = id;
         this.walkable = walkable;
-        this.transparent = transparent;
+        this.combined = combined;
+    }
+
+    public Tile(BufferedImage texture, int id, boolean walkable, boolean combined, int[] parents){
+        this.parents = parents;
+        new Tile(texture, id, walkable, combined);
     }
 }
