@@ -18,6 +18,7 @@ public class GamePanel extends JPanel implements Runnable{
     final int originalTileSize = 32;
     final int scale = 2;
     final String path = "./src/textures/";
+    final String world = "dungeon";
 
     final int tileSize = originalTileSize * scale;
     final int maxScreenCol = 25;
@@ -27,8 +28,8 @@ public class GamePanel extends JPanel implements Runnable{
 
     private Tile[] textures;
 
-    final private int sizeX = 16 * 2;
-    final private int sizeY = 16 * 2;
+    final private int sizeX = 16 * 3;
+    final private int sizeY = 16 * 3;
 
     int[][] map = new int[sizeY][sizeX]; // dimensions should be divisible by 16!
     private int camOffsetX;
@@ -305,8 +306,8 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
 
-        String filePath = "./src/mapdata/chunk-" + x + "-" + y + ".dat";
-        //filePath = "./src/mapdata/default.dat"; // overwrite to export to default chunk file
+        String filePath = "./src/mapdata/" + world + "/chunk-" + x + "-" + y + ".dat";
+        //filePath = "./src/mapdata/" + world + "/default.dat"; // overwrite to export to default chunk file
         try {
             FileWriter writer = new FileWriter(filePath);
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
@@ -331,7 +332,7 @@ public class GamePanel extends JPanel implements Runnable{
         for (int x = 0; x < sizeX / 16; x++){
             for (int y = 0; y < sizeY / 16; y++){
                 try {
-                    File file = new File("./src/mapdata/chunk-" + x + "-" + y + ".dat");
+                    File file = new File("./src/mapdata/" + world + "/chunk-" + x + "-" + y + ".dat");
                     //System.out.println("Reading file: " + file.getName());
                     if (!file.exists()){
                         continue;
