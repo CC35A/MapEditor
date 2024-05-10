@@ -10,10 +10,10 @@ public class TilePanel extends JPanel {
 
     final int originalTileSize = 32;
     final int scale = 2;
-    final int columns = 4;
+    final int columns = 10;
 
     final int tileSize = originalTileSize * scale;
-    final int maxScreenCol = 5;
+    final int maxScreenCol = 10;
     final int maxScreenRow = 15;
     final int screenWidth = tileSize * maxScreenCol;
     final int screenHeight = tileSize * maxScreenRow;
