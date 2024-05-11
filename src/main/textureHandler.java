@@ -30,6 +30,10 @@ public class textureHandler {
                     f.renameTo(new File(renamePath));
                     index = imgList.size() - 1;
                 } else index = Integer.parseInt(keys[0]);
+                if(keys.length<3){
+                    System.out.printf("ID %d hat keine Korrekten Flags gesetzt!", imgList.size()-1);
+                    System.exit(0);
+                }
                 boolean combined = keys[2].equals("C");
 
                 tileArr[index] = new Tile(img, index, !keys[1].equals("N"), combined);
