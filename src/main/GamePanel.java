@@ -195,6 +195,7 @@ public class GamePanel extends JPanel implements Runnable{
         for (File f : dirList){
             System.out.println(f.getName());
             String[] keys = f.getName().replace(".png", "").split("-");
+            System.out.println(f.getName());
             int parent1 = Integer.parseInt(keys[3]);
             int parent2 = Integer.parseInt(keys[4]);
             System.out.println(parent1 + "-" + parent2);

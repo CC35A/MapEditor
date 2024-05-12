@@ -30,7 +30,6 @@ public class TilePanel extends JPanel {
         this.textures = textureHandler.getTextures();
         ArrayList<Tile> tmpTxtList = new ArrayList<Tile>();
         for (Tile tile : textures){
-            System.out.println(tile);
             if(tile == null) continue;
             if (!tile.combined) tmpTxtList.add(tile);
         }
