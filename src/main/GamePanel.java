@@ -28,8 +28,8 @@ public class GamePanel extends JPanel implements Runnable{
 
     private Tile[] textures;
 
-    final private int sizeX = 16 * 3;
-    final private int sizeY = 16 * 3;
+    final private int sizeX = 16 * 8;
+    final private int sizeY = 16 * 8;
 
     int[][] map = new int[sizeY][sizeX]; // dimensions should be divisible by 16!
     private int camOffsetX;
