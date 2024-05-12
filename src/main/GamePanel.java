@@ -18,7 +18,7 @@ public class GamePanel extends JPanel implements Runnable{
     final int originalTileSize = 32;
     final int scale = 2;
     final String path = "./src/textures/";
-    final String world = "dungeon";
+    final String world = "overworld";
 
     final int tileSize = originalTileSize * scale;
     final int maxScreenCol = 25;
