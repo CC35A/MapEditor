@@ -35,7 +35,7 @@ public class textureHandler {
                     System.exit(0);
                 }
                 boolean combined = keys[2].equals("C");
-                System.out.println(index + " " + combined);
+                //System.out.println(index + " " + combined);
 
                 tileArr[index] = new Tile(img, index, !keys[1].equals("N"), combined);
                 //System.out.println(renamePath);

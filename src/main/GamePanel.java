@@ -15,10 +15,11 @@ import java.util.Scanner;
 
 public class GamePanel extends JPanel implements Runnable{
 
+    private int counter = 0;
     final int originalTileSize = 32;
     final int scale = 2;
     final String path = "./src/textures/";
-    final String world = "overworld";
+    public String world = "overworld";
 
     final int tileSize = originalTileSize * scale;
     final int maxScreenCol = 25;
@@ -28,8 +29,8 @@ public class GamePanel extends JPanel implements Runnable{
 
     private Tile[] textures;
 
-    final private int sizeX = 16 * 8;
-    final private int sizeY = 16 * 8;
+    private int sizeX = 16 * 8;
+    private int sizeY = 16 * 8;
 
     int[][] map = new int[sizeY][sizeX]; // dimensions should be divisible by 16!
     private int camOffsetX;
@@ -328,18 +329,33 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    private void readChunks(){
+    public void readChunks(){
+        File dir = new File("./src/mapdata/" + world);
+        if(!dir.exists()) return;
+        sizeX = 0;
+        sizeY = 0;
+        for (File f : dir.listFiles()){
+            String name = f.getName();
+            String[] keys = name.replace(".dat", "").split("-");
+            if(keys.length < 3) continue;
+            int xtmp = Integer.parseInt(keys[1]) + 1;
+            int ytmp = Integer.parseInt(keys[2]) + 1;
+            if(xtmp > sizeX) sizeX = xtmp;
+            if(ytmp > sizeY) sizeY = ytmp;
+        }
+        System.out.println(sizeX + "; " + sizeY);
+        map = new int[sizeY * 16][sizeX * 16];
 
-        for (int x = 0; x < sizeX / 16; x++){
-            for (int y = 0; y < sizeY / 16; y++){
+        for (int x = 0; x < sizeX; x++){
+            for (int y = 0; y < sizeY; y++){
                 try {
                     File file = new File("./src/mapdata/" + world + "/chunk-" + x + "-" + y + ".dat");
-                    //System.out.println("Reading file: " + file.getName());
+                    System.out.println("Reading file: " + file.getName());
                     if (!file.exists()){
                         continue;
                     }
                     Scanner reader = new Scanner(file);
-                    int counter = 0;
+                    counter = 0;
                     while (reader.hasNextLine()) {
                         String data = reader.nextLine();
                         String[] string = data.replaceAll(" ", "").split(",");
